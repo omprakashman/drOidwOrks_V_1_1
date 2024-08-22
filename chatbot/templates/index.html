@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %} <!-- This line is required to use the static template tag -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>friend drOid</title>
+    <style>
+        body {
+            font-family: candara, verdana;
+            text-align: left;
+            padding: 100px;
+        }
+
+        a {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            color: white;
+            background-color: #FF6347;
+            text-decoration: none;
+            font-size: 5px;
+            border-radius: 10px;
+        }
+
+        a:hover {
+            background-color: #8B008B;
+        }
+
+        /* Chatbox style */
+        .chatbox {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 500px;
+            background-color: #AFEEEE;
+            border: 7px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chatbox-header {
+            background-color: #4169E1;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: none;
+        }
+
+        .chatbox-body {
+            height: 400px;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .chatbox-footer {
+            padding: 10px;
+            border-top: 7px solid #ccc;
+        }
+
+        .chatbox-footer input[type="text"] {
+            width: calc(100% - 50px);
+            padding: 20px;
+            margin-bottom: 30px; /* Add a line break before the button */
+        }
+
+        .chatbox-footer button {
+            width: 70px;
+            padding: 10px;
+            background-color: #4169E1;
+            color: white;
+            border: none;
+        }
+
+        /* Message container style */
+        .message-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .message-container img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .message-text {
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        /* Agent message container style */
+        .agent-message-container {
+            justify-content: flex-end; /* Aligns the message to the right */
+        }
+
+        .agent-message-container img {
+            margin-right: 0; /* Removes the margin on the right side of the image */
+            margin-left: 10px; /* Adds margin on the left side to space from the text */
+        }
+
+        .agent-message-container .message-text {
+            background-color: #EEE8AA; /* Optionally change the background color for agent messages */
+        }
+    </style>
+
+    <link rel="icon" href="{% static 'chatbot/favicon.png' %}" type="image/x-icon">
+</head>
+<body>
+    <h1>friend drOid</h1>
+
+    <!-- Chatbox -->
+    <div class="chatbox">
+        <div class="chatbox-header">
+            <b> friend drOid  @  live
+        </div>
+        <div class="chatbox-body" id="chatbox-body">
+            <!-- Messages will appear here -->
+        </div>
+        <div class="chatbox-footer">
+            <input type="text" id="chat-message-input" placeholder="Type a message...">
+            <button id="send-button"> Ask </button>
+        </div>
+    </div>
+
+    <script>
+        const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+
+        // List of possible agent messages
+        const agentMessages = [
+            "Hello",
+            "How may I help you?",
+            "Wonderful to have you",
+            "Keep visiting us",
+            "I am glad",
+            "Please stay in for a long time"
+        ];
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const message = data.message;
+
+            const messageContainer = document.createElement('div');
+            messageContainer.classList.add('message-container');
+
+            const imgElement = document.createElement('img');
+            imgElement.src = "{% static 'mysqlapp/droid.png' %}";
+            messageContainer.appendChild(imgElement);
+
+            const messageText = document.createElement('div');
+            messageText.classList.add('message-text');
+            messageText.innerHTML = message;
+            messageContainer.appendChild(messageText);
+
+            document.getElementById('chatbox-body').appendChild(messageContainer);
+
+            // Scroll to the bottom
+            scrollToBottom();
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        // Send message when the send button is clicked
+        document.getElementById('send-button').onclick = function(e) {
+            sendMessage();
+        };
+
+        // Send message when Enter key is pressed
+        document.getElementById('chat-message-input').onkeydown = function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();  // Prevent the default action (form submission)
+                sendMessage();
+            }
+        };
+
+        function sendMessage() {
+            const messageInputDom = document.getElementById('chat-message-input');
+            const message = messageInputDom.value;
+            const formattedMessage = "  " + message;
+
+            // Send the message with the "Me" prefix
+            chatSocket.send(JSON.stringify({'message': formattedMessage}));
+
+            // Display the user's message in the chatbox
+            const messageContainer = document.createElement('div');
+            messageContainer.classList.add('message-container');
+
+            const imgElement = document.createElement('img');
+            imgElement.src = "{% static 'chatbot/guest.png' %}";
+            messageContainer.appendChild(imgElement);
+
+            const messageText = document.createElement('div');
+            messageText.classList.add('message-text');
+            messageText.innerHTML = formattedMessage; // Use innerHTML to render HTML tags
+            messageContainer.appendChild(messageText);
+
+            document.getElementById('chatbox-body').appendChild(messageContainer);
+
+            // Clear the input field
+            messageInputDom.value = '';
+
+            // Scroll to the bottom
+            scrollToBottom();
+
+            // Agent's response after a slight delay (to simulate typing)
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * agentMessages.length);
+                const agentMessage = "   " + agentMessages[randomIndex];
+
+                // Display the agent's response in the chatbox
+                const agentMessageContainer = document.createElement('div');
+                agentMessageContainer.classList.add('message-container', 'agent-message-container');
+
+                const agentImgElement = document.createElement('img');
+                agentImgElement.src = "{% static 'chatbot/droid.png' %}";
+                agentMessageContainer.appendChild(agentImgElement);
+
+                const agentMessageText = document.createElement('div');
+                agentMessageText.classList.add('message-text');
+                agentMessageText.innerHTML = agentMessage; // Use innerHTML to render HTML tags
+                agentMessageContainer.appendChild(agentMessageText);
+
+                document.getElementById('chatbox-body').appendChild(agentMessageContainer);
+
+                // Scroll to the bottom
+                scrollToBottom();
+            }, 1000);  // 1 second delay
+        }
+
+        function scrollToBottom() {
+            const chatboxBody = document.getElementById('chatbox-body');
+            chatboxBody.scrollTop = chatboxBody.scrollHeight;
+        }
+    </script>
+</body>
+</html>
