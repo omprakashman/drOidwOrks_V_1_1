@@ -46,16 +46,22 @@
 
 		.chatbox-header {
 			background-color: #4169E1;
+			font-size: 24px; /* Adjust the size as needed */
 			color: #FFFFFF; /* Change this to your desired font color */
 			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add this line to give a shadow effect to the text */
 			padding: 15px;
-			text-align: center;
 			font-weight: bold;
 			border-bottom: 1px solid #ccc;
-			position: relative; /* Add this line to position the pseudo-element */
 		}
 
-		.chatbox-header::after {
+		.chatbox-header .header-top {
+			display: flex;
+			align-items: center;
+			justify-content: center; /* Center the header text */
+			position: relative; /* Add this line to position the flicker circle */
+		}
+
+		.chatbox-header .header-top::after {
 			content: '';
 			display: inline-block;
 			width: 16px; /* Diameter of the circle */
@@ -63,13 +69,19 @@
 			background-color: limegreen; /* Bright green color */
 			border-radius: 50%; /* Makes the element a circle */
 			margin-left: 10px; /* Space between the text and the circle */
-			vertical-align: middle; /* Aligns the circle vertically with the text */
 			animation: flicker 1.5s infinite; /* Add animation for flickering effect */
 		}
 
 		@keyframes flicker {
 			0%, 100% { opacity: 1; }
 			50% { opacity: 0.5; }
+		}
+
+		.chatbox-header .header-bottom {
+			display: flex;
+			justify-content: flex-end; /* Align the date and time to the right */
+			font-size: 10px;
+			color: rgb(235, 235, 187); /* Set your desired font color here */
 		}
 
 		.chatbox-body {
@@ -147,6 +159,13 @@
 			background-color: #e9e9e9; /* Optionally change the background color for agent messages */
 			font-size: 14px; /* Set the font size for agent messages */
 		}
+
+		/* Style for the date-time span */
+		.date-time {
+			font-size: 12px;
+			display: block;
+			margin-top: 5px;
+		}
 	</style>
 
 	<link rel="icon" href="{% static 'chatbot/favicon.png' %}" type="image/x-icon">
@@ -157,13 +176,18 @@
 	<!-- Chatbox -->
 	<div class="chatbox">
 		<div class="chatbox-header">
-			OPE droid
+			<div class="header-top">
+				OPE droid
+			</div>
+			<div class="header-bottom">
+				<span id="date-time" class="date-time"></span>
+			</div>
 		</div>
 		<div class="chatbox-body" id="chatbox-body">
 			<!-- Initial agent message -->
 			<div class="message-container agent-message-container">
 				<img src="{% static 'chatbot/droid.png' %}" alt="Agent">
-				<div class="message-text">Hello there, how may I help you :-) </div>
+				<div class="message-text">What's my next task, please? 😊</div>
 			</div>
 		</div>
 		<div class="chatbox-footer">
@@ -282,6 +306,25 @@
 			const chatboxBody = document.getElementById('chatbox-body');
 			chatboxBody.scrollTop = chatboxBody.scrollHeight;
 		}
+
+		// Function to format date and time
+		function formatDateTime(date) {
+			const options = { month: 'short', day: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+			return date.toLocaleString('en-US', options);
+		}
+
+		// Set the current date and time in the header
+		function updateDateTime() {
+			const now = new Date();
+			const formattedDateTime = formatDateTime(now);
+			document.getElementById('date-time').innerText = formattedDateTime;
+		}
+
+		// Update the date and time every second
+		setInterval(updateDateTime, 1000);
+
+		// Initial call to set the date and time immediately
+		updateDateTime();
 	</script>
 </body>
 </html>
