@@ -2,17 +2,17 @@
 <html lang="en">
 {% load static %} <!-- This line is required to use the static template tag -->
 
-<!-- Om added at 11:46 PM-->
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>friend drOid</title>
     <style>
         body {
-            font-family: candara, verdana;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: left;
-            padding: 100px;
+            padding: 50px;
+            background-color: #f4f4f9;
+            color: #333;
         }
 
         a {
@@ -22,8 +22,9 @@
             color: white;
             background-color: #FF6347;
             text-decoration: none;
-            font-size: 5px;
-            border-radius: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
 
         a:hover {
@@ -33,45 +34,59 @@
         /* Chatbox style */
         .chatbox {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 500px;
-            background-color: #AFEEEE;
-            border: 7px solid #ccc;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         .chatbox-header {
             background-color: #4169E1;
             color: white;
-            padding: 10px;
+            padding: 15px;
             text-align: center;
-            font-weight: none;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
         }
 
         .chatbox-body {
-            height: 400px;
+            height: 300px;
             padding: 10px;
             overflow-y: auto;
+            background-color: #f9f9f9;
         }
 
         .chatbox-footer {
             padding: 10px;
-            border-top: 7px solid #ccc;
+            border-top: 1px solid #ccc;
+            display: flex;
+            align-items: center;
         }
 
         .chatbox-footer input[type="text"] {
-            width: calc(100% - 50px);
-            padding: 20px;
-            margin-bottom: 30px; /* Add a line break before the button */
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
         }
 
         .chatbox-footer button {
-            width: 70px;
-            padding: 10px;
-            background-color: #4169E1;
+            padding: 10px 15px;
+            background-color: #28a745; /* Changed to green */
             color: white;
             border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .chatbox-footer button:hover {
+            background-color: #218838; /* Darker green on hover */
         }
 
         /* Message container style */
@@ -85,12 +100,14 @@
             width: 30px;
             height: 30px;
             margin-right: 10px;
+            border-radius: 50%;
         }
 
         .message-text {
-            background-color: white;
+            background-color: #e9e9e9;
             padding: 10px;
             border-radius: 10px;
+            max-width: 70%;
         }
 
         /* Agent message container style */
@@ -104,7 +121,7 @@
         }
 
         .agent-message-container .message-text {
-            background-color: #EEE8AA; /* Optionally change the background color for agent messages */
+            background-color: #d1e7fd; /* Optionally change the background color for agent messages */
         }
     </style>
 
@@ -116,14 +133,14 @@
     <!-- Chatbox -->
     <div class="chatbox">
         <div class="chatbox-header">
-            <b> friend drOid  @  live
+            friend drOid @ live
         </div>
         <div class="chatbox-body" id="chatbox-body">
             <!-- Messages will appear here -->
         </div>
         <div class="chatbox-footer">
             <input type="text" id="chat-message-input" placeholder="Type a message...">
-            <button id="send-button"> Ask </button>
+            <button id="send-button">Ask now </button>
         </div>
     </div>
 
