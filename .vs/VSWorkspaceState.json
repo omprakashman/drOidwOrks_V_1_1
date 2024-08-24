@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\chatbot",
+    "\\chatbot\\templates"
   ],
+  "SelectedNode": "\\chatbot\\templates\\index.html",
   "PreviewInSolutionExplorer": false
 }
